@@ -58,6 +58,10 @@
     .row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
     .row.one{grid-template-columns:1fr}
     .viewer-wrap{position:relative;overflow:auto;background:#cbd5e1;min-width:0;cursor:default}
+    .viewer-empty-state{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:40px;pointer-events:none}
+    .viewer-empty-card{display:flex;align-items:center;justify-content:center;width:min(760px,82%);padding:clamp(24px,5vw,56px);border:1px solid rgba(148,163,184,.35);border-radius:16px;background:#fff;box-shadow:0 18px 50px rgba(0,0,0,.3)}
+    .viewer-empty-state img{display:block;width:100%;height:auto}
+    .viewer-wrap.has-drawing .viewer-empty-state{display:none}
     .viewer-wrap.draw-mode{cursor:crosshair}
     #overlay.endpoint-hover{cursor:grab}
     #overlay.endpoint-dragging{cursor:grabbing}
@@ -585,6 +589,11 @@
     </aside>
 
     <main class="viewer-wrap" id="viewerWrap">
+      <div class="viewer-empty-state" aria-hidden="true">
+        <div class="viewer-empty-card">
+          <img src="assets/ductcount-logo.png" alt="">
+        </div>
+      </div>
       <div id="stage">
         <canvas id="pdfCanvas"></canvas>
         <canvas id="overlay"></canvas>
@@ -684,7 +693,7 @@
 
       <div class="section">
         <div class="hint" style="text-align:center; line-height:1.6">
-          DuctCount.com © 2026<br>
+          Kirt.app © 2026<br>
           Kirt Parmenter
         </div>
       </div>
@@ -1172,6 +1181,7 @@
     pdfNeedsSave = !options.skipSave;
     const data = new Uint8Array(await currentPdfBlob.arrayBuffer());
     pdfDoc = await pdfjsLib.getDocument({data}).promise;
+    viewerWrap.classList.add('has-drawing');
     $('pageCount').textContent = pdfDoc.numPages;
     pageNum = Math.max(1,Math.min(pdfDoc.numPages,Number(options.page)||1)); $('pageNum').value = pageNum;
     await fitWidthAndRender();
